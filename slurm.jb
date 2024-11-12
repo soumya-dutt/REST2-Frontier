@@ -1,0 +1,30 @@
+#!/bin/bash
+#SBATCH -A bie119
+#SBATCH -J TRPV1-REST2-tm
+#SBATCH -o %x-%j.out
+#SBATCH -e %x-%j.err
+#SBATCH -t 01:59:59 
+#SBATCH -p batch
+#SBATCH -N 6
+#
+module load PrgEnv-gnu
+module load rocm/5.7.0
+module load cray-fftw
+module load craype-accel-amd-gfx90a
+
+sourcedir=/lustre/orion/bie119/world-shared/NAMD3.1-alpha1/NAMD_3.1alpha1_Linux-x86_64-netlrts-smp-HIP/
+
+charmbin=${sourcedir}/charmrun
+namdbin=${sourcedir}/namd3
+
+#Making output
+mkdir output
+cd output
+for i in {0..47} ; do mkdir -p $i/rest2 ; done
+cd ../
+# This is for 8 replicas. 
+
+#$charmbin ++verbose  ++n 8 ++ppn 5 ++mpiexec ++remote-shell srun $namdbin +pemap 3-63:8.5 +commap 2-63:8.1 +devices 4,5,2,3,6,7,0,1 +replicas 8 +devicesperreplica 1 job0.conf +stdout output_spt_aaqaa3/%d/rest2/job0.%d.log
+
+# For 32 replicas 
+$charmbin ++verbose  ++n 48 ++ppn 5 ++mpiexec ++remote-shell srun $namdbin +pemap 3-63:8.5 +commap 2-63:8.1 +devices 4,5,2,3,6,7,0,1 +replicas 48 +devicesperreplica 1 job0.conf +stdout output/%d/rest2/job0.%d.log
