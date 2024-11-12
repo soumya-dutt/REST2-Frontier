@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -A bie119
+#SBATCH -A <project-id>
 #SBATCH -J TRPV1-REST2-tm
 #SBATCH -o %x-%j.out
 #SBATCH -e %x-%j.err
